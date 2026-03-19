@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graph Wizard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg-animation"></div>
+
+<div class="container">
+    <h1>🚀 Graph Algorithm Wizard</h1>
+
+    <div id="loader" class="loader hidden"></div>
+
+    <form method="POST" id="wizardForm">
+
+        <div class="step active">
+            <h2>Select Mode</h2>
+            <select name="mode" id="mode">
+                <option value="visual">Graph Visualization</option>
+                <option value="dijkstra">Dijkstra Algorithm</option>
+            </select>
+            <button type="button" onclick="nextStep()">Next ➡</button>
+        </div>
+
+        <div class="step">
+            <h2>Graph Setup</h2>
+            <input type="number" id="numEdges" placeholder="Number of edges">
+            <select id="weighted">
+                <option value="yes">Weighted</option>
+                <option value="no">Unweighted</option>
+            </select>
+            <button type="button" onclick="generateEdges()">Next ➡</button>
+        </div>
+
+        <div class="step">
+            <h2>Enter Edges</h2>
+            <div id="edgesContainer"></div>
+            <button type="button" onclick="nextStep()">Next ➡</button>
+        </div>
+
+        <div class="step">
+            <h2>Select Layout</h2>
+            <select name="layout">
+                <option value="spring">Spring</option>
+                <option value="circular">Circular</option>
+                <option value="random">Random</option>
+                <option value="planar">Planar</option>
+            </select>
+            <button type="button" onclick="checkMode()">Next ➡</button>
+        </div>
+
+        <div class="step">
+            <h2>Dijkstra Input</h2>
+            <input type="text" name="source" placeholder="Source">
+            <input type="text" name="target" placeholder="Target">
+            <button type="button" onclick="prepareSubmit()">Finish ✅</button>
+        </div>
+
+        <textarea name="edges" id="finalEdges" hidden></textarea>
+
+    </form>
+
+    {% if path %}
+    <div class="result">
+        <h2>Shortest Path</h2>
+        <p id="typedPath"></p>
+
+        <h2>Distance</h2>
+        <p id="typedDistance"></p>
+    </div>
+    {% endif %}
+
+    {% if img_path %}
+    <img src="{{ img_path }}" class="graph">
+    {% endif %}
+
+</div>
+
+<audio id="clickSound" src="https://www.soundjay.com/buttons/button-3.mp3"></audio>
+
+<script>
+let currentStep = 0;
+const steps = document.querySelectorAll(".step");
+const clickSound = document.getElementById("clickSound");
+
+function playSound(){
+    clickSound.currentTime = 0;
+    clickSound.play();
+}
+
+function showStep(i){
+    steps.forEach((s,index)=>{
+        s.classList.toggle("active", index===i);
+    });
+}
+
+function nextStep(){
+    playSound();
+    currentStep++;
+    showStep(currentStep);
+}
+
+function generateEdges(){
+    playSound();
+    let num = document.getElementById("numEdges").value;
+    let weighted = document.getElementById("weighted").value;
+    let container = document.getElementById("edgesContainer");
+
+    container.innerHTML="";
+
+    for(let i=0;i<num;i++){
+        container.innerHTML+=`
+        <div class="edge-row">
+            <input placeholder="V1">
+            <input placeholder="V2">
+            ${weighted==="yes" ? '<input placeholder="Weight">' : ''}
+        </div>`;
+    }
+
+    nextStep();
+}
+
+function checkMode(){
+    let mode=document.getElementById("mode").value;
+    if(mode==="visual"){
+        prepareSubmit();
+    }else{
+        nextStep();
+    }
+}
+
+function prepareSubmit(){
+    let rows=document.querySelectorAll(".edge-row");
+    let data="";
+
+    rows.forEach(r=>{
+        let inputs=r.querySelectorAll("input");
+        let vals=[];
+        inputs.forEach(i=>vals.push(i.value));
+        data+=vals.join(" ")+"\n";
+    });
+
+    document.getElementById("finalEdges").value=data;
+
+    document.getElementById("loader").classList.remove("hidden");
+
+    setTimeout(()=>{
+        document.getElementById("wizardForm").submit();
+    },800);
+}
+
+function typeText(el,text,speed=40){
+    let i=0;
+    function t(){
+        if(i<text.length){
+            el.innerHTML+=text.charAt(i);
+            i++;
+            setTimeout(t,speed);
+        }
+    }
+    t();
+}
+
+window.onload=function(){
+    let path="{{ path }}";
+    let dist="{{ length }}";
+
+    if(path){
+        typeText(document.getElementById("typedPath"), path);
+        typeText(document.getElementById("typedDistance"), dist, 70);
+    }
+}
+</script>
+
+</body>
+</html>
