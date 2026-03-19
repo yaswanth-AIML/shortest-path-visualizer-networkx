@@ -12,17 +12,13 @@ A Python-based project to visualize the shortest path between nodes in a graph u
 * 🎨 Graph visualization with highlighted shortest path
 
 ---
-
 ## 🛠️ Tech Stack
 
 * Python
 * NetworkX
 * Matplotlib
-
 ---
-
 ## ⚙️ How It Works
-
 1. User inputs graph edges (with or without weights)
 2. Graph is created using NetworkX
 3. Shortest path is computed using Dijkstra’s Algorithm
