@@ -87,11 +87,3 @@ A Python-based project to visualize the shortest path between nodes in a graph u
 Feel free to fork the repository and improve it.
 
 ---
-
-## 📩 Contact
-
-If you have any suggestions or feedback, feel free to reach out!
-
----
-
-⭐ If you like this project, don’t forget to star the repo!
